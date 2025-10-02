@@ -10,148 +10,216 @@
   <title>vasant-valley</title>
 
   <style>
-    /* ------------------- Container & Video ------------------- */
-    .app-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #000;
-      overflow: hidden;
+    /* ---------- Base / Reset ---------- */
+
+    :root {
+      --bg: #000;
+      --accent: #007bff;
+      --accent-dark: #0056b3;
+      --cta: #eaca6d;
+      --cta-dark: #d4b45a;
+      --max-centre-width: 1200px;
+      --skip-height: 48px;
+      --gap: 12px;
     }
 
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      touch-action: manipulation;
+    }
+
+    /* ---------- App Container & Video ---------- */
+    .app-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: var(--bg);
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Make video fill the full viewport while preserving aspect ratio */
     .app-video {
       width: 100vw;
       height: 100vh;
+      max-width: none;
+      max-height: none;
       object-fit: cover;
+      display: block;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
     }
 
-    /* ------------------- Skip Button ------------------- */
+    /* ---------- Skip Button (large tappable area) ---------- */
     .skip-button {
-    position: absolute;
-    bottom: 20px;
-    left: 0;
-    width: 100%;          /* full width */
-    padding: 12px 0;      /* adjust padding */
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 0;     /* optional: remove rounded corners */
-    background-color: #007bff;
-    color: #fff;
-    z-index: 10;
-    text-align: center;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: env(safe-area-inset-bottom, 20px);
+      margin: 0 auto;
+      width: calc(100% - 40px);
+      max-width: var(--max-centre-width);
+      height: var(--skip-height);
+      line-height: var(--skip-height);
+      padding: 0 16px;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      z-index: 30;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      transition: transform .12s ease, background-color .12s ease, opacity .12s;
+      opacity: 1;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* smaller on very small screens */
+    @media (max-width: 420px) {
+      .skip-button {
+        font-size: 14px;
+        height: 44px;
+        width: calc(100% - 28px);
+      }
     }
 
     .skip-button:hover {
-      background-color: #0056b3;
+      background: var(--accent-dark);
+      transform: translateY(-2px);
     }
 
-    /* ------------------- End Screen ------------------- */
+    /* ---------- End screen overlay ---------- */
     .end-screen {
-      display: none;
-      background-color: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 999999;
       position: fixed;
-      width: 100%;
-      height: 100%;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      background: rgba(0,0,0,0.65);
+      padding: calc(env(safe-area-inset-top,16px) + 16px) 16px calc(env(safe-area-inset-bottom,16px) + 16px);
+      box-sizing: border-box;
     }
 
     .end-screen-content {
-      padding: 2rem;
-      border-radius: 10px;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(122,36,31,0.95);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
       text-align: center;
-      background: rgba(122, 36, 31, 0.9);
-      max-width: 400px;
-      width: 90%;
+      color: #fff;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
 
+    /* Input */
     .text-input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 1.5rem;
-      border-radius: 5px;
-      font-size: 16px;
       box-sizing: border-box;
-      background-color: #ffffff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 2px solid rgba(255,255,255,0.18);
+      background: #fff;
+      color: #111;
+      font-size: 16px;
+      margin-bottom: 16px;
       outline: none;
-      border: 2px solid #ccc;
-      color: #000;
     }
 
-    .text-input:focus {
-      border-color: #007bff;
-    }
-
+    /* Buttons */
     .button-group {
       display: flex;
-      gap: 10px;
+      gap: var(--gap);
       justify-content: center;
+      align-items: center;
     }
-
     .download-button {
-      padding: 12px 24px;
+      padding: 12px 18px;
+      border-radius: 8px;
       border: none;
-      border-radius: 5px;
+      font-weight: 700;
       font-size: 16px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      background-color: #eaca6d;
-      color: #fff;
+      background: var(--cta);
+      color: #111;
+      transition: transform .12s ease, background-color .12s ease;
+      -webkit-tap-highlight-color: transparent;
     }
-
     .download-button:hover {
-      background-color: #d4b45a;
+      background: var(--cta-dark);
+      transform: translateY(-2px);
     }
 
-    /* ------------------- Mobile Adjustments ------------------- */
-    @media screen and (max-width: 768px) {
+    /* ---------- Orientation / Mobile handling ---------- */
+    @media screen and (max-width: 768px) and (orientation: portrait) {
       .app-container {
         transform: rotate(90deg);
-        transform-origin: center center;
+        transform-origin: 50% 50%;
         width: 100vh;
         height: 100vw;
-        position: fixed;
-        top: 50%;
         left: 50%;
-        margin-top: -50vw;
-        margin-left: -50vh;
-        background-color: #000;
+        top: 50%;
+        position: fixed;
+        margin: 0;
+        translate: -50% -50%;
       }
 
       .app-video {
+        width: 100vmax;
+        height: 100vmax;
         object-fit: cover;
       }
 
       .end-screen-content {
-        max-width: 300px;
-        padding: 1.5rem;
+        max-width: 320px;
+        padding: 18px;
       }
-
-      .button-group {
-        flex-direction: column;
-      }
-
-      .download-button {
-        width: 100%;
-        margin-bottom: 10px;
+      .skip-button {
+        width: calc(100% - 28px);
+        height: 46px;
+        bottom: 18px;
       }
     }
 
-    @media screen and (max-width: 480px) {
-      .app-container {
-        transform: rotate(90deg) scale(1);
+    /* ---------- Accessibility / Preferences ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      .skip-button, .download-button {
+        transition: none;
       }
+    }
+
+    /* ---------- Utility visibility classes ---------- */
+    .hidden {
+      display: none !important;
+    }
+    .visible {
+      display: block !important;
+    }
+
+    /* ---------- Small tweak: ensure layering with video controls when present ---------- */
+    .app-video::-webkit-media-controls {
+      z-index: 1;
     }
   </style>
 </head>
 <body style="margin:0; padding:0;">
   <div class="app-container">
-    <video id="videoPlayer" src="./assets/first.mp4" playsinline autoplay  controls class="app-video"></video>
+    <video id="videoPlayer" src="./assets/first.mp4"  autoplay class="app-video"></video>
     <button id="skipButton" class="skip-button" style="opacity:0; pointer-events:auto;">Skip to Part 2</button>
 
     <div class="end-screen">
@@ -164,7 +232,7 @@
     </div>
   </div>
 
-  <script>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const video = document.getElementById("videoPlayer");
   const skipBtn = document.getElementById("skipButton");
@@ -172,66 +240,99 @@ document.addEventListener("DOMContentLoaded", () => {
   const downloadBtn = document.querySelector(".download-button");
   const input = document.querySelector(".text-input");
 
-  // Ensure autoplay (muted)
-  video.play().catch(() => {
-    console.log("Autoplay blocked, waiting for interaction.");
-  });
-
-  // Unmute on first interaction
-  function enableSound() {
-    if (video.muted) {
-      video.muted = false;
-      video.volume = 1.0;
-    }
-  }
-  video.addEventListener("click", enableSound);
-  skipBtn.addEventListener("click", enableSound);
-
-  // Initialize part
   video.dataset.part = "1";
   endScreen.style.display = "none";
 
-  // Video ended event
+  // Try to play with sound first (some browsers will reject)
+  async function tryPlayWithSound() {
+    try {
+      video.muted = false;
+      video.volume = 1.0;
+      await video.play(); // may reject
+      console.log("Playing with sound");
+      return true;
+    } catch (err) {
+      console.warn("Autoplay with sound blocked:", err);
+      // fallback to muted autoplay
+      video.muted = true;
+      try { await video.play(); } catch(e){ console.error(e); }
+      showUnmuteHint();
+      return false;
+    }
+  }
+
+  function showUnmuteHint() {
+    // create a small overlay instructing the user to click to enable sound
+    if (document.getElementById('unmuteHint')) return;
+    const hint = document.createElement('div');
+    hint.id = 'unmuteHint';
+    hint.style = `
+      position: fixed; left: 50%; top: 16px; transform: translateX(-50%);
+      z-index: 99999; background: rgba(0,0,0,0.7); color: #fff;
+      padding: 8px 14px; border-radius: 6px; font-family: sans-serif;
+      cursor: pointer;
+    `;
+    hint.textContent = 'Click anywhere to enable sound';
+    document.body.appendChild(hint);
+
+    function enable() {
+      video.muted = false;
+      video.volume = 1.0;
+      // resume playing in case autoplay paused
+      video.play().catch(()=>{});
+      hint.remove();
+      document.removeEventListener('click', enable);
+      document.removeEventListener('touchstart', enable);
+      document.removeEventListener('keydown', enable);
+    }
+    document.addEventListener('click', enable, { once: true });
+    document.addEventListener('touchstart', enable, { once: true });
+    document.addEventListener('keydown', enable, { once: true });
+  }
+
+  // wire up ended/skip logic (same as your original)
   video.addEventListener("ended", () => {
     if (video.dataset.part === "1") {
-      video.src = "/assets/second.mp4";
+      video.src = "./assets/second.mp4";
       video.dataset.part = "2";
       video.load();
-      video.play();
+      video.play().catch(()=>{});
       skipBtn.style.display = "none";
     } else {
       endScreen.style.display = "flex";
     }
   });
 
-  // Skip button
   skipBtn.addEventListener("click", () => {
     video.src = "./assets/second.mp4";
     video.dataset.part = "2";
     video.load();
-    video.play();
+    // treat skip as user interaction: unmute then play
+    video.muted = false;
+    video.volume = 1.0;
+    video.play().catch(()=>{});
     skipBtn.style.display = "none";
   });
 
-  // Download invitation logic
+  // try autoplay with sound; fallback handled in function
+  tryPlayWithSound();
+
+  // download invitation logic unchanged...
   async function loadImageBitmap(url) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Image fetch failed: ${res.status}`);
     const blob = await res.blob();
     return await createImageBitmap(blob);
   }
-
   async function createAndDownloadInvitation(name) {
     const imagePath = "./assets/The-Floating-Tribe.png";
     try {
       const imgBitmap = await loadImageBitmap(imagePath);
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-
       canvas.width = imgBitmap.width;
       canvas.height = imgBitmap.height;
       ctx.drawImage(imgBitmap, 0, 0);
-
       const fontSize = Math.round(canvas.height * 0.045);
       ctx.font = `${fontSize}px "Great Vibes", serif`;
       ctx.textAlign = "center";
@@ -242,12 +343,10 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.shadowColor = "rgba(0,0,0,0.35)";
       ctx.shadowBlur = Math.round(fontSize * 0.25);
       ctx.shadowOffsetY = Math.round(fontSize * 0.08);
-
       const x = canvas.width / 2;
       const y = canvas.height * 0.28;
       ctx.strokeText(name, x, y);
       ctx.fillText(name, x, y);
-
       canvas.toBlob(blob => {
         if (!blob) return alert("Failed to create image.");
         const url = URL.createObjectURL(blob);
@@ -264,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(err);
     }
   }
-
   downloadBtn.addEventListener("click", () => {
     const name = input.value.trim();
     if (!name) return alert("Please enter a name first!");
@@ -272,5 +370,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 </body>
 </html>
